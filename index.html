@@ -28,18 +28,19 @@
         <span class="block"><b>Comision de CCL:</b> -7,5%</span>
         <div class="border-2 border-gray-700 max-w-[500px]"></div>
         <p id="total-ontop">Total: Cambio:</p>
-        <br />
+        <!--         <br />
         <h3 class="text-lg font-medium underline">Cambio Lemon Cash</h3>
         <span class="block"><b>Comision de red BEP-20:</b> -0,8 USD</span>
         <span class="block"><b>Comision de Lemon Venta cripto:</b> -0,5%</span>
         <div class="border-2 border-gray-700 max-w-[500px]"></div>
-        <p id="total-lemon">Total: Cambio:</p>
+        <p id="total-lemon">Total: Cambio:</p> -->
       </div>
     </div>
   </body>
   <script>
     const calcular = document.querySelector("#button");
     const monto = document.querySelector("#monto");
+    const comisionOntop = 1.54;
 
     async function getDolarCCL() {
       try {
@@ -47,12 +48,15 @@
           "https://mercados.ambito.com//dolarrava/cl/variacion"
         );
         var data = await response.json();
-        var dolarCCL = parseFloat(data.compra);
+        var dolarCCL = parseFloat(data.compra.replace(",", "."));
         console.log(dolarCCL);
+        var montoConComision =
+          parseFloat(monto.value).toFixed(2) - comisionOntop;
+        var total = dolarCCL * 0.925 * montoConComision;
         document.querySelector("#total-ontop").innerText = `
-              Dolar CCL = $${dolarCCL}
-              TOTAL = $${dolarCCL * 0.925 * parseFloat(monto.value)}
-              `;
+                  Dolar CCL = $${dolarCCL}
+                  TOTAL = $${total.toFixed(2)}
+                  `;
       } catch (error) {
         console.log(error);
       }
@@ -75,7 +79,7 @@
     }
     calcular.addEventListener("click", function () {
       getDolarCCL();
-      getDolarCrypto();
+      /*       getDolarCrypto(); */
     });
   </script>
 </html>
