@@ -7,33 +7,49 @@
     <title>Exchange Calculator</title>
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body class="bg-blue-500">
-    <div class="p-4">
-      <input
-        type="number"
-        class="border border-gray-600 p-2 rounded-md min-w-[480px]"
-        placeholder="Ingresar monto a cambiar"
-        id="monto"
-      />
-      <button
-        type="submit"
-        id="button"
-        class="bg-gray-600 text-white p-2 rounded-md"
-      >
-        Calcular
-      </button>
-      <div class="p-2 my-2 bg-gray-400">
-        <h3 class="text-lg font-medium underline">Cambio Ontop</h3>
-        <span class="block"><b>Flat fee:</b> -1,54 USD</span>
-        <span class="block"><b>Comision de CCL:</b> -7,5%</span>
-        <div class="border-2 border-gray-700 max-w-[500px]"></div>
-        <p id="total-ontop">Total: Cambio:</p>
-        <!--         <br />
-        <h3 class="text-lg font-medium underline">Cambio Lemon Cash</h3>
-        <span class="block"><b>Comision de red BEP-20:</b> -0,8 USD</span>
-        <span class="block"><b>Comision de Lemon Venta cripto:</b> -0,5%</span>
-        <div class="border-2 border-gray-700 max-w-[500px]"></div>
-        <p id="total-lemon">Total: Cambio:</p> -->
+  <body class="bg-gradient-to-r from-[#8BC6EC] to-[#9599E2]">
+    <div class="p-4 mx-auto max-w-[1100px]">
+      <div class="flex justify-center">
+        <input
+          type="number"
+          class="border border-gray-600 m-1 p-2 rounded-md w-full max-w-[480px]"
+          placeholder="Ingresar monto a cambiar"
+          min="20"
+          max="1000000"
+          id="monto"
+        />
+        <button
+          type="submit"
+          id="button"
+          class="bg-gray-600 text-white m-1 p-2 rounded-md"
+        >
+          Calcular
+        </button>
+      </div>
+      <div class="flex flex-row flex-wrap justify-center p-2 my-2 bg-gray-600">
+        <div class="m-2 p-2 bg-white rounded-md w-[300px]">
+          <img src="images/ontop.png" class="h-[60px] mx-auto" />
+          <span class="block"><b>Flat fee:</b> -1,54 USD</span>
+          <span class="block"><b>Comision de CCL:</b> -7,5%</span>
+          <div class="border-2 border-gray-600 bg-gray-700 max-w-[500px]"></div>
+          <p id="total-ontop"><br /></p>
+        </div>
+        <div class="m-2 p-2 bg-white rounded-md w-[300px]">
+          <img src="images/lemon.png" class="h-[50px] mb-2.5 mx-auto" />
+          <span class="block"><b>Comision de red BEP-20:</b> -0,8 USD</span>
+          <span class="block"><b>Comision de Venta cripto:</b> -0,5%</span>
+          <div class="border-2 border-gray-600 bg-gray-700 max-w-[500px]"></div>
+          <p id="total-lemon"><br /></p>
+        </div>
+        <div class="m-2 p-2 bg-white rounded-md w-[300px]">
+          <h3 class="text-4xl h-[60px] text-center font-medium uppercase">
+            Dolar Blue
+          </h3>
+          <br />
+          <br />
+          <div class="border-2 border-gray-600 bg-gray-700 max-w-[500px]"></div>
+          <p id="total-blue"><br /></p>
+        </div>
       </div>
     </div>
   </body>
@@ -41,21 +57,29 @@
     const calcular = document.querySelector("#button");
     const monto = document.querySelector("#monto");
     const comisionOntop = 1.54;
+    const comisionCrypto = 0.8;
 
     async function getDolarCCL() {
       try {
         const response = await fetch(
-          "https://mercados.ambito.com//dolarrava/cl/variacion"
+          "https://mercados.ambito.com//dolarrava/cl/variacion",
+          { method: "GET" }
         );
         var data = await response.json();
         var dolarCCL = parseFloat(data.compra.replace(",", "."));
-        console.log(dolarCCL);
-        var montoConComision =
-          parseFloat(monto.value).toFixed(2) - comisionOntop;
-        var total = dolarCCL * 0.925 * montoConComision;
+        let montoACambiar = parseFloat(monto.value).toFixed(2);
+        var totalOntop = (montoACambiar - comisionOntop) * dolarCCL * 0.925;
+        if (montoACambiar < 20) {
+          document.querySelector("#total-ontop").innerText = `
+          El monto minimo a transferir desde Ontop es $20`;
+          return null;
+        }
         document.querySelector("#total-ontop").innerText = `
                   Dolar CCL = $${dolarCCL}
-                  TOTAL = $${total.toFixed(2)}
+                  TOTAL = $${totalOntop.toFixed(2)}
+                  Estarias cambiando a = $${(
+                    totalOntop / montoACambiar
+                  ).toFixed(2)}
                   `;
       } catch (error) {
         console.log(error);
@@ -65,21 +89,54 @@
     async function getDolarCrypto() {
       try {
         const response = await fetch(
-          "https://api.cryptosaurio.com/ar/prices/ARS/USDC/ask,bid",
-          {
-            method: "GET",
-            mode: "no-cors",
-          }
+          `https://criptoya.com/api/lemoncash/USDC`,
+          { method: "GET" }
         );
         var data = await response.json();
-        console.log(data);
+        var montoACambiar = parseFloat(monto.value).toFixed(2);
+        var totalLemon = (
+          parseFloat(data.totalBid) *
+          (montoACambiar - comisionCrypto)
+        ).toFixed(2);
+        if (montoACambiar < 20) {
+          document.querySelector("#total-lemon").innerText = `
+          El monto minimo a transferir desde Ontop es $20`;
+          return null;
+        }
+        document.querySelector("#total-lemon").innerText = `
+                  Dolar Crypto = $${data.totalBid.toFixed(2)}
+                  TOTAL = $${totalLemon}
+                  Estarias cambiando a = $${(
+                    totalLemon / montoACambiar
+                  ).toFixed(2)}
+                  `;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    async function getDolarBlue() {
+      try {
+        const response = await fetch(
+          `https://mercados.ambito.com//dolar/informal/variacion`,
+          { method: "GET" }
+        );
+        var data = await response.json();
+        var dolarBlue = parseFloat(data.compra.replace(",", ".")).toFixed(2);
+        let montoACambiar = parseFloat(monto.value).toFixed(2);
+        document.querySelector("#total-blue").innerText = `
+                  Dolar Blue = $${dolarBlue}
+                  TOTAL = $${(dolarBlue * montoACambiar).toFixed(2)}
+                  Estarias cambiando a = $${dolarBlue}
+                  `;
       } catch (error) {
         console.log(error);
       }
     }
     calcular.addEventListener("click", function () {
       getDolarCCL();
-      /*       getDolarCrypto(); */
+      getDolarCrypto();
+      getDolarBlue();
     });
   </script>
 </html>
