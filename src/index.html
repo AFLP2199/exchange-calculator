@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/dist/output.css" rel="stylesheet" />
+    <link
+      rel="shortcut icon"
+      href="../public/favicon.ico"
+      type="image/x-icon"
+    />
+    <title>Exchange Calculator</title>
+  </head>
+  <body class="bg-gradient-to-r from-[#667eea] to-[#764ba2]">
+    <div class="p-4 mx-auto max-w-[1100px]">
+      <form class="flex justify-center">
+        <input
+          type="number"
+          class="border border-gray-600 outline-0 m-1 p-2 focus:ring-2 ring-pink-500 ring-inset rounded-md w-full max-w-[480px]"
+          placeholder="Ingresar monto a cambiar"
+          min="20"
+          max="1000000"
+          id="monto"
+        />
+        <button
+          type="submit"
+          id="button"
+          class="bg-gray-600 text-white m-1 p-2 rounded-md"
+        >
+          Calcular
+        </button>
+      </form>
+      <div
+        class="flex flex-row flex-wrap justify-center p-2 my-2 bg-gray-600 rounded-sm"
+      >
+        <div class="m-2 p-2 bg-white rounded-md w-[300px]">
+          <img src="../public/images/ontop.png" class="h-[60px] mx-auto" />
+          <span class="block"><b>Flat fee:</b> -1,54 USD</span>
+          <span class="block"><b>Comision de CCL:</b> -7,5%</span>
+          <div class="border-2 border-gray-600 bg-gray-700 max-w-[500px]"></div>
+          <p id="total-ontop"><br /></p>
+        </div>
+        <div class="m-2 p-2 bg-white rounded-md w-[300px]">
+          <img
+            src="../public/images/lemon.png"
+            class="h-[50px] mb-2.5 mx-auto"
+          />
+          <span class="block"><b>Comision de red BEP-20:</b> -0,8 USD</span>
+          <span class="block"><b>Comision de Venta cripto:</b> -0,5%</span>
+          <div class="border-2 border-gray-600 bg-gray-700 max-w-[500px]"></div>
+          <p id="total-lemon"><br /></p>
+        </div>
+        <div class="m-2 p-2 bg-white rounded-md w-[300px]">
+          <h3 class="text-4xl h-[60px] text-center font-medium uppercase">
+            Dolar Blue
+          </h3>
+          <br />
+          <br />
+          <div class="border-2 border-gray-600 bg-gray-700 max-w-[500px]"></div>
+          <p id="total-blue"><br /></p>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="./script.js"></script>
+</html>
