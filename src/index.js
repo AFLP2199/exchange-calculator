@@ -11,9 +11,9 @@ async function getDolarCCL() {
     );
     var data = await response.json();
     var dolarCCL = parseFloat(data.compra.replace(",", "."));
-    let montoACambiar = parseFloat(monto.value).toFixed(2);
+    let montoACambiar = parseFloat(monto.value);
     var totalOntop = (montoACambiar - comisionOntop) * dolarCCL * 0.925;
-    if (montoACambiar < 20) {
+    if (!montoACambiar || Number.isNaN(montoACambiar) || montoACambiar < 20) {
       document.querySelector("#total-ontop").innerText = `
       El monto minimo para transferir desde Ontop es $20`;
       return null;
@@ -42,7 +42,7 @@ async function getDolarCrypto() {
       parseFloat(data.totalBid) *
       (montoACambiar - comisionCrypto)
     );
-    if (montoACambiar < 20) {
+    if (!montoACambiar || Number.isNaN(montoACambiar) || montoACambiar < 20) {
       document.querySelector("#total-lemon").innerText = `
       El monto minimo para transferir desde Ontop es $20`;
       return null;
@@ -61,14 +61,13 @@ async function getDolarCrypto() {
 
 async function getDolarBlue() {
   try {
-    const response = await fetch(
-      `https://mercados.ambito.com//dolar/informal/variacion`,
-      { method: "GET" }
-    );
-    var data = await response.json();
-    var dolarBlue = parseFloat(data.compra.replace(",", ".")).toFixed(2);
-    let montoACambiar = parseFloat(monto.value).toFixed(2);
-    if (montoACambiar < 1) {
+    const data = await fetch('https://www.dolarsi.com/api/api.php?type=valoresprincipales')
+    const dolares = await data.json()
+    const filteredDolar = dolares.find((e) => e.casa.nombre === 'Dolar Blue')?.casa.compra
+    const dolarBlue = parseFloat(filteredDolar.replace(",", ".")).toFixed(2);
+    let montoACambiar = parseFloat(monto.value);
+    console.log(Number.isNaN(montoACambiar))
+    if (!montoACambiar || Number.isNaN(montoACambiar)  || montoACambiar < 1) {
       document.querySelector("#total-blue").innerText = `
       Monto invalido
       `;
